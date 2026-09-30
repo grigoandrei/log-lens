@@ -3,10 +3,13 @@ package src;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         LogParser parser = new LogParser();
+        List<LogEntry> entries = new ArrayList<>();
 
         BufferedReader reader;
 
@@ -16,13 +19,14 @@ public class Main {
 
             while (line != null) {
                 LogEntry entry = parser.parse(line);
-                System.out.println("Timestamp: " + entry.getTimestamp());
-                System.out.println("Level: " + entry.getLevel());
-                System.out.println("Message: " + entry.getMessage());
-                System.out.println();
-
+                entries.add(entry);
                 line = reader.readLine();
             }
+
+            LogAnalyzer analyzer = new LogAnalyzer(entries);
+            System.out.println(analyzer.countLevels());
+            System.out.println(analyzer.uniqueMessagesByLevel(LogLevel.ERROR));
+            System.out.println(analyzer.mostCommonMessages());
 
             reader.close();
         } catch (IOException e) {
